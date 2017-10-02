@@ -21,7 +21,7 @@ public class RangeSlider extends JSlider {
 	public final int Starting_point_thumb = 10;
 
 	
-	//ces getters permettent de recuperer la hauteur et largeur de notre composant
+	//ces getters permettent de repositionner correctement le rectangle de debut
 		public int getStartPositionThumb() {
 			return Starting_point_thumb;
 		}

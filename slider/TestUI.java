@@ -13,9 +13,7 @@ public class TestUI {
 	public static void main(String[] args) {
 		
 		window.setTitle("RangeSlider");
-		window.setVisible(true);
-		//window.setLayout(new BorderLayout());
-		
+		window.setVisible(true);		
 				
 		window.add(rs,BorderLayout.NORTH);
 		window.add(values,BorderLayout.SOUTH);
