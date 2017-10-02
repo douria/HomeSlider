@@ -12,9 +12,9 @@ public class TestUI {
 	
 	public static void main(String[] args) {
 		
-		window.setTitle("RangeSlider Test");
+		window.setTitle("RangeSlider");
 		window.setVisible(true);
-		window.setLayout(new BorderLayout());
+		//window.setLayout(new BorderLayout());
 		
 				
 		window.add(rs,BorderLayout.NORTH);
