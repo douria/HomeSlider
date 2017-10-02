@@ -15,17 +15,18 @@ public class RangeSliderUI extends BasicSliderUI{
 	RangeSlider self;
 	enum States {IDLE,CLICK_RIGHT_SIDE,CLICK_LEFT_SIDE,CLICK_MIDDLE,CLICK_RECT_LEFT,CLICK_RECT_RIGHT};
 	States state;
-	
+
+
 	private int oldValue = 0;
 	
 	public RangeSliderUI(RangeSlider o) {
 		super(o);
 		this.self = o;
 		state = States.IDLE;
-		gauche = new Rectangle(self.getValue(),0,self.tickWidth,self.tickHeight);
-		droite = new Rectangle(self.getUpValue(),0,self.tickWidth,self.tickHeight);	
+		gauche = new Rectangle(self.getValue(),0,self.thumbWidth,self.thumbHeight);
+		droite = new Rectangle(self.getUpValue(),0,self.thumbWidth,self.thumbHeight);	
 	}
-
+	
 	@Override
 	protected TrackListener createTrackListener(JSlider slider) {
 		return new RangeSliderEvent();
@@ -40,8 +41,7 @@ public class RangeSliderUI extends BasicSliderUI{
 	// to draw the two thumb
 	@Override
 	public void paint(Graphics g, JComponent c) {
-		TestUI.setvalUI();// update values min/value/extent/max disp 
-//		super.paint(g, c);
+		TestUI.setvalUI();
 // appel à paintThunb dans le super...
 		super.paint(g, c);
 	}
@@ -54,7 +54,7 @@ public class RangeSliderUI extends BasicSliderUI{
 		droite.x = self.getUpValue();
 
 		// middle
-		g2D.setColor(Color.ORANGE);
+		g2D.setColor(Color.RED);
 		g2D.fillRect(gauche.x+gauche.width,gauche.height/4,droite.x-gauche.x,gauche.height/2);
 		
 		// left cursor
@@ -102,12 +102,6 @@ public class RangeSliderUI extends BasicSliderUI{
 				self.setSliderDroite(e.getX());
 				break;
 			case CLICK_MIDDLE :
-				// on cherche le bord le plus proche, et on le déplace à la position voulue
-//				if((e.getX()-gauche.x)<((droite.x-gauche.x)/2)) {
-//					self.setSliderGauche(e.getX());
-//				}else {
-//					self.setSliderDroite(e.getX());
-//				}
 				oldValue = e.getX();
 				break;
 			default:
@@ -119,12 +113,6 @@ public class RangeSliderUI extends BasicSliderUI{
 		public void mouseDragged(MouseEvent e) {
 			switch(state) {
 			case CLICK_MIDDLE:
-				// on cherche le bord le plus proche, et on ajuste le rect voulu
-//				if((e.getX()-gauche.x)<((droite.x-gauche.x)/2)) {
-//					self.setSliderGauche(e.getX());
-//				}else {
-//					self.setSliderDroite(e.getX());
-//				}
 				int newValue = e.getX();
 				int offset = newValue - oldValue;
 				self.moveRange(offset);

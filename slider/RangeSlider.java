@@ -14,8 +14,17 @@ import javax.swing.DefaultBoundedRangeModel;
  */
 public class RangeSlider extends JSlider {
 	private static final long serialVersionUID = 1L;
-	public int tickWidth = 10;
-	public int tickHeight = 20;
+	//these variables define the width and height of the thumb
+	public int thumbWidth = 10;
+	public int thumbHeight = 20;
+	//this variables shifts the min value to the right position in the layout
+	public final int Starting_point_thumb = 10;
+
+	
+	//ces getters permettent de recuperer la hauteur et largeur de notre composant
+		public int getStartPositionThumb() {
+			return Starting_point_thumb;
+		}
 
 	public RangeSlider(int orientation, int extent, int min, int max, int value){
 		this.orientation = orientation;
@@ -32,49 +41,30 @@ public class RangeSlider extends JSlider {
 		updateLabelUIs();
 	}
 
-
-
-	/**
-	 * 
-	 */
 	@Override
 	public int getValue() {
 		return super.getValue();
 	}
 
 	/**
-	 * On override, redirection vers notre fonction, pour set le rect gauche.
-	 */
-	//	@Override
-	//	public void setValue(int n) {
-	//		setSliderGauche(n);
-	//	}
-
-
-	/**
-	 * la position du rect droite
-	 * @return la position du rect droite
+	 * 
+	 * @return right rectangle's position
 	 */
 	public int getUpValue() {
 		return (this.getValue() + this.getExtent());
 	}
 	/**
-	 * Set rect gauche
-	 * @param n la position souhaitée
+	 * 
+	 * @param n the desired position
 	 */
-	public void setSliderGauche(int n) {
+	public void setSliderGauche(int newPosition) {
 		int old = this.getValue();
-
-		/* on s'assure que la nouvelle valeur soit inférieur au rect droite, et supérieur au min.
-		 * remarque : 
-		 * - TestUI.rect_width  empeche les 2 rectangles de "fusionner" à l'affichage :)
-		 */
-
-		int new_val = Math.min(Math.max(getMinimum(),n),getUpValue()-tickWidth);
-		int new_extent = old-new_val+getExtent();
+		// We make sure that the new value is lower than the right rectangle's value or minimum 
+		int new_value = Math.min(Math.max(getMinimum(),newPosition),getUpValue()-thumbWidth);
+		int new_extent = old-new_value+getExtent();
 
 		// On est obligé d'appeler cette méthode, vu qu'on a override setValue ;)
-		this.getModel().setRangeProperties(new_val,new_extent,getMinimum(),getMaximum(),getValueIsAdjusting());
+		this.getModel().setRangeProperties(new_value,new_extent,getMinimum(),getMaximum(),getValueIsAdjusting());
 	}
 
 	/**
@@ -90,16 +80,17 @@ public class RangeSlider extends JSlider {
 		 * remarque : 
 		 * +TestUI.rect_width empeche les 2 rectangles de "fusionner" à l'affichage :)
 		 */ 
-		//this.setExtent(Math.min(Math.max(0,val-getValue())+TestUI.rect_width,getMaximum()-getValue()));
-		if (this.getValue() + tickWidth <= val){
+		if (this.getValue() + thumbWidth <= val){
 			this.setExtent(val - getValue());
 		}
 		else{
-			this.setExtent(tickWidth);
+			this.setExtent(thumbWidth);
 		}
 	}
 
 	public void moveRange(int offset){
 		this.setValue(this.getValue() + offset);
 	}
+	
+	
 }
