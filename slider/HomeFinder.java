@@ -19,8 +19,10 @@ public class HomeFinder {
 		//Define a title
 	    window.setTitle("Welcome to Home Finder!");
 	    //define the size of the frame: width & height in pixels
+
 	    window.setSize(1000, 800);
 	    //Set the position of the frame in the center
+
 	    window.setLocationRelativeTo(null);
 	    //Stop the process when we click on the red button 
 	    window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -65,6 +67,7 @@ public class HomeFinder {
 		// Telling to the Frame it need to display the Panel
 		window.setContentPane(pan);
 		
+
 	}
 
 }

@@ -44,6 +44,5 @@ public class Home {
 		return "Home [posX=" + posX + ", posY=" + posY + ", nb_bedroom="
 				+ nb_bedroom + ", value=" + value + "]";
 	}
-	
-	
+
 }
