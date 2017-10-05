@@ -7,20 +7,17 @@ import javax.swing.JLabel;
 
 public class TestUI {
 	public static JLabel values = new JLabel("");
-	public static RangeSlider rs = new RangeSlider(0,50,0,100,0);
+	public static RangeSlider rs = new RangeSlider(0,70,0,100,0);
 	public static JFrame window = new JFrame();
 	
 	public static void main(String[] args) {
 		
 		window.setTitle("RangeSlider");
 		window.setVisible(true);		
-				
 		window.add(rs,BorderLayout.NORTH);
 		window.add(values,BorderLayout.SOUTH);
 		setvalUI();
-		
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
 		window.pack();
 		window.setLocationRelativeTo(null);
 	}

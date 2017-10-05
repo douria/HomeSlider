@@ -11,20 +11,21 @@ import javax.swing.plaf.basic.BasicSliderUI;
 
 public class RangeSliderUI extends BasicSliderUI{
 
-	private Rectangle gauche, droite;
-	RangeSlider self;
-	enum States {IDLE,CLICK_RIGHT_SIDE,CLICK_LEFT_SIDE,CLICK_MIDDLE,CLICK_RECT_LEFT,CLICK_RECT_RIGHT};
+	private Rectangle left, right;
+	RangeSlider rangeSlider;
+	enum States {IDLE,CLICK_RIGHT_SIDE,CLICK_LEFT_SIDE,CLICK_RECT_LEFT,CLICK_RECT_RIGHT};
 	States state;
 
-
-	private int oldValue = 0;
 	
-	public RangeSliderUI(RangeSlider o) {
-		super(o);
-		this.self = o;
+	/* the constructor 
+	 * we just initialize every variable*/
+	
+	public RangeSliderUI(RangeSlider rangeSlider) {
+		super(rangeSlider);
+		this.rangeSlider= rangeSlider;
 		state = States.IDLE;
-		gauche = new Rectangle(self.getValue(),0,self.thumbWidth,self.thumbHeight);
-		droite = new Rectangle(self.getUpValue(),0,self.thumbWidth,self.thumbHeight);	
+		left = new Rectangle(rangeSlider.getValue(),0,rangeSlider.thumbWidth,rangeSlider.thumbHeight);
+		right = new Rectangle(rangeSlider.getRightValue(),0,rangeSlider.thumbWidth,rangeSlider.thumbHeight);	
 	}
 	
 	@Override
@@ -32,17 +33,72 @@ public class RangeSliderUI extends BasicSliderUI{
 		return new RangeSliderEvent();
 	}
 	
+	/* this class implements all the events with the clics ! */
+	private class RangeSliderEvent extends TrackListener{
+
+		States getPosition(MouseEvent e) {
+			if(right.contains(e.getPoint())){
+				return States.CLICK_RECT_RIGHT;
+			}else if(left.contains(e.getPoint())){
+				return States.CLICK_RECT_LEFT;
+			}else if(e.getX()<left.x){
+				return States.CLICK_LEFT_SIDE;
+			}else if(e.getX()>right.x){
+				return States.CLICK_RIGHT_SIDE;
+			}else{
+				/*if we clic on the middle. nothing happens */
+				return States.IDLE;
+			}
+		}
+
+	
+		@Override
+		public void mousePressed(MouseEvent e) {
+			state = getPosition(e);
+			switch(state){
+			case CLICK_LEFT_SIDE:
+				rangeSlider.setSliderLeft(e.getX());
+				break;
+			case CLICK_RIGHT_SIDE:
+				rangeSlider.setSliderRight(e.getX());
+				break;
+			default:
+				break;
+			}
+		}
+		
+		@Override
+		public void mouseDragged(MouseEvent e) {
+			switch(state) {
+			case CLICK_RECT_LEFT:
+				rangeSlider.setSliderLeft(e.getX());
+				break;
+			case CLICK_RECT_RIGHT:
+				rangeSlider.setSliderRight(e.getX());
+				break;
+			default:
+				break;
+			}
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			/*we come back to first state */
+			state = States.IDLE;
+		}
+
+	}
+	
 	// To add a thumb
 	@Override
-	public void installUI(JComponent c) {
-		super.installUI(c);
+	public void installUI(JComponent component) {
+		super.installUI(component);
 	}
 
-	// to draw the two thumb
+	// to draw the two thumbs
 	@Override
 	public void paint(Graphics g, JComponent c) {
 		TestUI.setvalUI();
-// appel à paintThunb dans le super...
 		super.paint(g, c);
 	}
 
@@ -50,84 +106,22 @@ public class RangeSliderUI extends BasicSliderUI{
 	public void paintThumb(Graphics g) {
 		Graphics2D g2D = (Graphics2D) g.create();
 
-		gauche.x = self.getValue();
-		droite.x = self.getUpValue();
+		left.x = rangeSlider.getValue();
+		right.x = rangeSlider.getRightValue();
 
 		// middle
 		g2D.setColor(Color.RED);
-		g2D.fillRect(gauche.x+gauche.width,gauche.height/4,droite.x-gauche.x,gauche.height/2);
-		
-		// left cursor
-		g2D.setColor(Color.LIGHT_GRAY);
-		g2D.fillRect(gauche.x, gauche.y, gauche.width, gauche.height);
-		
+		g2D.fillRect(left.x+left.width,left.height/4,right.x-left.x,left.height/2);
+		//left cursor
+		g2D.setColor(Color.black);
+		g2D.fillRect(left.x, left.y, left.width, left.height);
 		//right cursor
-		g2D.setColor(Color.LIGHT_GRAY);
-		g2D.fillRect(droite.x,droite.y,droite.width,droite.height);
-
-
+		g2D.setColor(Color.black);
+		g2D.fillRect(right.x,right.y,right.width,right.height);
+		
 		g2D.dispose();
 	}
 
 
-	private class RangeSliderEvent extends TrackListener{
-
-		States getPosition(MouseEvent e) {
-			if(droite.contains(e.getPoint())){
-				return States.CLICK_RECT_RIGHT;
-			}else if(gauche.contains(e.getPoint())){
-				return States.CLICK_RECT_LEFT;
-			}else if(e.getX()<gauche.x){
-				return States.CLICK_LEFT_SIDE;
-			}else if(e.getX()>droite.x){
-				return States.CLICK_RIGHT_SIDE;
-			}else{
-				return States.CLICK_MIDDLE;
-			}
-		}
-
-		@Override
-		public void mouseReleased(MouseEvent e) {
-			state = States.IDLE;
-		}
-
-		@Override
-		public void mousePressed(MouseEvent e) {
-			state = getPosition(e);
-			switch(state){
-			case CLICK_LEFT_SIDE:
-				self.setSliderGauche(e.getX());
-				break;
-			case CLICK_RIGHT_SIDE:
-				self.setSliderDroite(e.getX());
-				break;
-			case CLICK_MIDDLE :
-				oldValue = e.getX();
-				break;
-			default:
-				break;
-			}
-		}
-
-		@Override
-		public void mouseDragged(MouseEvent e) {
-			switch(state) {
-			case CLICK_MIDDLE:
-				int newValue = e.getX();
-				int offset = newValue - oldValue;
-				self.moveRange(offset);
-				oldValue = newValue;
-				break;
-			case CLICK_RECT_LEFT:
-				self.setSliderGauche(e.getX());
-				break;
-			case CLICK_RECT_RIGHT:
-				self.setSliderDroite(e.getX());
-				break;
-			default:
-				break;
-			}
-		}
-
-	}
+	
 }
