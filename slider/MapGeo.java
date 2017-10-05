@@ -39,7 +39,8 @@ public class MapGeo extends JPanel{
 				// System.out.println("posX "+posx+" posy "+posy);
 				g.fillOval(posx, posy, r, r);
 			}
-		}	
+		}
+		this.setVisible(true);
 	}
 
 
