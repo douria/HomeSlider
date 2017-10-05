@@ -15,7 +15,7 @@ public class RangeSliderUI extends BasicSliderUI{
 	RangeSlider rangeSlider;
 	enum States {IDLE,CLICK_RIGHT_SIDE,CLICK_LEFT_SIDE,CLICK_RECT_LEFT,CLICK_RECT_RIGHT};
 	States state;
-
+   
 	
 	/* the constructor 
 	 * we just initialize every variable*/

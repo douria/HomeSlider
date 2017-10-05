@@ -26,7 +26,7 @@ public class RangeSlider extends JSlider {
 	public int thumbHeight = 20;
 	//this variables shifts the min value to the right position in the layout
 	private final int Starting_point_thumb = 10;
-
+   
 	
 	//ces getters permettent de repositionner correctement le rectangle de debut
 		public int getStartPositionThumb() {
