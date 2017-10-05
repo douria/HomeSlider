@@ -7,7 +7,7 @@ import javax.swing.JPanel;
 
 public class MapGeo extends JPanel{
 	
-	private Home tabApart[];
+	private Home[] tabApart;
 	private int minNbBedroom;
 	private int maxNbBedroom;
 	private int minValue;
@@ -20,18 +20,23 @@ public class MapGeo extends JPanel{
 	
 	
 	public void paintComponent(Graphics g){
-		int r= 5;
+		System.out.println("minNbBedroom = "+minNbBedroom+" ; maxNbBedroom = "+maxNbBedroom+"; minValue = "+minValue+"; maxValue = "+maxValue+"; minX = "+minX+"; maxX"+maxX+"; minY = "+minY+"; maxY = "+maxY);
+		int r= 10;
 		int width = this.getWidth()-2*r;
 		int height = this.getHeight()-2*r;
+		System.out.println(width+" "+height);
 		
 		int posx = 0;
 		int posy = 0;
+		g.setColor(Color.red);
 		for (int i = 0; i< tabApart.length; i++){
-			
-			if (minNbBedroom < tabApart[i].nb_bedroom && maxNbBedroom > tabApart[i].nb_bedroom && minValue < tabApart[i].value && maxValue > tabApart[i].value ){
-				posx = tabApart[i].posX / ((minX+maxX)/width) + r;
-				posy = height - tabApart[i].posY / ((minY+maxY)/height) + r;
-				g.setColor(Color.red);
+			// System.out.println(tabApart[i]);
+			if (minNbBedroom <= tabApart[i].nb_bedroom && maxNbBedroom >= tabApart[i].nb_bedroom && minValue <= tabApart[i].value && maxValue >= tabApart[i].value ){
+				float scale = Math.min(width/(float)(maxX-minX), height/(float)(maxY-minY));
+				posx = (int) ((tabApart[i].posX) * scale + r); 
+				posy = (int) (height - tabApart[i].posY * scale+ r);
+				
+				// System.out.println("posX "+posx+" posy "+posy);
 				g.fillOval(posx, posy, r, r);
 			}
 		}	
