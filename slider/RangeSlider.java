@@ -27,15 +27,7 @@ public class RangeSlider extends JSlider {
 
 	// the constructor of a rangeSlider
 	public RangeSlider(int extent, int min, int max, int value){
-		//this.orientation = orientation;
-		//sliderModel = new DefaultBoundedRangeModel(value, extent, min, max);
-		//sliderModel.setExtent(extent);
-		//sliderModel.addChangeListener(changeListener);
-		
-		//this.setMinimum(min);
-		//this.setMaximum(max);
-		//this.setValue(value);
-		//this.setExtent(extent);
+
 		
 		super(min,max,value);
 		this.setExtent(extent);
@@ -63,7 +55,7 @@ public class RangeSlider extends JSlider {
 	public void setSliderLeft(int newPosition) {
 		int old = this.getValue();
 		// We make sure that the new value is lower than the right rectangle's value or minimum 
-		int new_value = Math.min(Math.max(getMinimum(),newPosition),getRightValue()-thumbWidth);
+		int new_value = Math.min(Math.max(getMinimum(),newPosition),getRightValue()+thumbWidth);
 		int new_extent = old-new_value+getExtent();
 		this.getModel().setRangeProperties(new_value,new_extent,getMinimum(),getMaximum(),getValueIsAdjusting());
 	}
@@ -73,11 +65,15 @@ public class RangeSlider extends JSlider {
 	 * @param RightValue
 	 */
 	public void setSliderRight(int RightValue) {
-		if (this.getValue() + thumbWidth <= RightValue){
-			this.setExtent(RightValue - getValue());
+		if (this.getValue() < RightValue){
+			this.setExtent(RightValue - this.getValue());
+			this.getModel().setRangeProperties(this.getValue(),RightValue - this.getValue(),getMinimum(),getMaximum(),getValueIsAdjusting());
+
 		}
 		else{
-			this.setExtent(thumbWidth);
+			this.setExtent(this.getValue());
+			this.getModel().setRangeProperties(this.getValue(),this.getValue(),getMinimum(),getMaximum(),getValueIsAdjusting());
+
 		}
 	}
 	

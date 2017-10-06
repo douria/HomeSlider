@@ -17,10 +17,7 @@ public class TestUI {
 		window.setTitle("RangeSlider");		
 		window.add(rs,BorderLayout.NORTH);
 		window.add(values,BorderLayout.SOUTH);
-		//setvalUI();
-		//rs.setMaximum(window.getWidth()-rs.getStartPositionThumb());
 		values.setText("<html>min : "+rs.getMinimum() + " value : " + rs.getValue() + "<br>extent : " + rs.getExtent() + " max : " + rs.getMaximum()+"</html>");
-		
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		window.pack();
 		window.setLocationRelativeTo(null);
@@ -30,7 +27,6 @@ public class TestUI {
 			public void stateChanged(ChangeEvent arg0) {
 				// TODO Auto-generated method stub
 				values.setText("<html>min : "+rs.getMinimum() + " value : " + rs.getValue() + "<br>extent : " + rs.getExtent() + " max : " + rs.getMaximum()+"</html>");
-				
 				values.repaint();
 
 			}

@@ -11,6 +11,20 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 public class HomeFinder {
+	
+	static MapGeo map;
+	
+	public static void updateMap_nb_bedroom(int max_nb_bedroom, int min_nb_bedroom){
+		map.setMaxNbBedroom(max_nb_bedroom);
+		map.setMinNbBedroom(min_nb_bedroom);
+		map.repaint();
+	};
+	public static void updateMap_value(int max_Value, int min_Value){
+		map.setMaxValue(max_Value);
+		map.setMinValue(min_Value);
+		map.repaint();
+	};
+	
 
 	/**
 	 * @param args
@@ -31,22 +45,25 @@ public class HomeFinder {
 		int max_posY = 800;
 		int min_posY = 0;
 		int max_nb_bedroom = 6;
+		int min_nb_bedroom = 1;
 		int max_Value = 100000;
 		int min_Value = 1000;
 		
 		// Instantiate new random values for apartments 
 		Home[] tab_apart = new Home[100];
 		for (int i = 0; i<tab_apart.length; i++){
-			tab_apart[i] = new Home(max_posX, min_posX, max_posY, min_posY, max_nb_bedroom, max_Value, min_Value);
+			tab_apart[i] = new Home(max_posX, min_posX, max_posY, min_posY, max_nb_bedroom, min_nb_bedroom, max_Value, min_Value);
 		}
+		
+		
 
 		// Declare the MAP PANEL
-		MapGeo map = new MapGeo();
+		map = new MapGeo();
 		
 		// Set the values we need in MapGeo to display the correct houses
 		map.setTabApart(tab_apart);
 		map.setMaxNbBedroom(max_nb_bedroom);
-		map.setMinNbBedroom(1);
+		map.setMinNbBedroom(min_nb_bedroom);
 		map.setMaxValue(max_Value);
 		map.setMinValue(min_Value);
 		map.setMaxX(max_posX);
@@ -79,11 +96,7 @@ public class HomeFinder {
 		slideNbB.addChangeListener(new ChangeListener(){
 
 			public void stateChanged(ChangeEvent event) {
-				// TODO Auto-generated method stub
-				System.out.println("Change Bedroom");
-				//map.setMinNbBedroom(((JSlider)event.getSource()).getValue());
-				//map.setMaxNbBedroom(((JSlider)event.getSource()).getExtent()+((JSlider)event.getSource()).getValue());
-				//map.repaint();
+				updateMap_nb_bedroom( ((JSlider)event.getSource()).getExtent()+((JSlider)event.getSource()).getValue(), ((JSlider)event.getSource()).getValue());
 			}
 			
 		});
@@ -102,18 +115,13 @@ public class HomeFinder {
 		//slideVal.setValue(max_Value);
 		slideVal.setPaintTicks(true);
 		slideVal.setPaintLabels(true);
-		slideVal.setMinorTickSpacing(10000);
-		slideVal.setMajorTickSpacing(50000);
+		slideVal.setMinorTickSpacing((max_Value-min_Value)/9);
+		slideVal.setMajorTickSpacing((max_Value-min_Value)/3);
 		
 		slideVal.addChangeListener(new ChangeListener(){
 
 			public void stateChanged(ChangeEvent event) {
-				// TODO Auto-generated method stub
-				System.out.println("Change Value");
-				//map.setMinValue(((JSlider)event.getSource()).getValue());
-				//map.setMaxValue(((JSlider)event.getSource()).getExtent()+((JSlider)event.getSource()).getValue());
-				//map.repaint();
-				
+				updateMap_value( ((JSlider)event.getSource()).getExtent()+((JSlider)event.getSource()).getValue(), ((JSlider)event.getSource()).getValue());				
 			}
 			
 		});
@@ -128,15 +136,12 @@ public class HomeFinder {
 		
 		filters.add(filterNbB);
 		filters.add(filterVal);
-		
-		System.out.println("Width = "+ window.getWidth()+" Height = "+window.getHeight()+" filters: w = "+filters.getWidth()+" h = "+filters.getHeight());
-		
+				
 		// Telling to the Frame it need to display the Panel
 		window.getContentPane().add(map, BorderLayout.CENTER);
 		window.getContentPane().add(filters, BorderLayout.EAST);
-		window.pack();
-		//System.out.println("Width = "+ window.getWidth()+" Height = "+window.getHeight()+" filters: w = "+filters.getWidth()+" h = "+filters.getHeight());
 		
+		window.pack();		
 		window.setVisible(true);
 	}
 

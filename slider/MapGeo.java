@@ -18,24 +18,21 @@ public class MapGeo extends JPanel{
 	private int maxY;
 	
 	public void paintComponent(Graphics g){
-		System.out.println("minNbBedroom = "+minNbBedroom+" ; maxNbBedroom = "+maxNbBedroom+"; minValue = "+minValue+"; maxValue = "+maxValue+"; minX = "+minX+"; maxX"+maxX+"; minY = "+minY+"; maxY = "+maxY);
+		//System.out.println("minNbBedroom = "+minNbBedroom+" ; maxNbBedroom = "+maxNbBedroom+"; minValue = "+minValue+"; maxValue = "+maxValue+"; minX = "+minX+"; maxX"+maxX+"; minY = "+minY+"; maxY = "+maxY);
 		int r= 10;
 		int width = this.getWidth()-2*r;
 		int height = this.getHeight()-2*r;
-		System.out.println(width+" "+height);
-		
+		g.setColor(Color.white);
+		g.fillRect(0,0,this.getWidth(), this.getHeight());
 		
 		int posx = 0;
 		int posy = 0;
 		g.setColor(Color.red);
 		for (int i = 0; i< tabApart.length; i++){
-			// System.out.println(tabApart[i]);
 			if (minNbBedroom <= tabApart[i].nb_bedroom && maxNbBedroom >= tabApart[i].nb_bedroom && minValue <= tabApart[i].value && maxValue >= tabApart[i].value ){
 				float scale = Math.min(width/(float)(maxX-minX), height/(float)(maxY-minY));
 				posx = (int) ((tabApart[i].posX) * scale + r); 
 				posy = (int) (height - tabApart[i].posY * scale+ r);
-				
-				// System.out.println("posX "+posx+" posy "+posy);
 				g.fillOval(posx, posy, r, r);
 			}
 		}

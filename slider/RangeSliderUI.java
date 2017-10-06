@@ -24,9 +24,9 @@ public class RangeSliderUI extends BasicSliderUI{
 		super(rangeSlider);
 		this.rangeSlider= rangeSlider;
 		state = States.IDLE;
-		float scale = (rangeSlider.getWidth()-rangeSlider.thumbWidth)/(float)(rangeSlider.getMaximum()-rangeSlider.getMinimum()) ;
-		left = new Rectangle((int)(rangeSlider.getValue()*scale),0,rangeSlider.thumbWidth,rangeSlider.thumbHeight);
-		right = new Rectangle((int)(rangeSlider.getRightValue()*scale),0,rangeSlider.thumbWidth,rangeSlider.thumbHeight);	
+		float scale = (rangeSlider.getWidth()-2*rangeSlider.thumbWidth)/(float)(rangeSlider.getMaximum()-rangeSlider.getMinimum()) ;
+		left = new Rectangle((int)(rangeSlider.getValue()*scale)-rangeSlider.thumbWidth,0,rangeSlider.thumbWidth,rangeSlider.thumbHeight);
+		right = new Rectangle((int)(rangeSlider.getRightValue()*scale)+rangeSlider.thumbWidth,0,rangeSlider.thumbWidth,rangeSlider.thumbHeight);	
 	}
 	
 	@Override
@@ -36,16 +36,15 @@ public class RangeSliderUI extends BasicSliderUI{
 	
 	/* this class implements all the events with the clics ! */
 	private class RangeSliderEvent extends TrackListener{
-
+		
 		States getPosition(MouseEvent e) {
-
 			if(right.contains(e.getPoint())){
 				return States.CLICK_RECT_RIGHT;
 			}else if(left.contains(e.getPoint())){
 				return States.CLICK_RECT_LEFT;
 			}else if(e.getX()<left.x){
 				return States.CLICK_LEFT_SIDE;
-			}else if(e.getX()>right.x){
+			}else if(e.getX()>right.x+rangeSlider.thumbWidth){
 				return States.CLICK_RIGHT_SIDE;
 			}else{
 				/*if we clic on the middle. nothing happens */
@@ -74,6 +73,7 @@ public class RangeSliderUI extends BasicSliderUI{
 		@Override
 		public void mouseDragged(MouseEvent e) {
 			float scale = (rangeSlider.getWidth()-rangeSlider.thumbWidth)/(float)(rangeSlider.getMaximum()-rangeSlider.getMinimum()) ;
+
 			switch(state) {
 			case CLICK_RECT_LEFT:
 				rangeSlider.setSliderLeft((int)(e.getX()/scale)+rangeSlider.getMinimum());
@@ -113,8 +113,6 @@ public class RangeSliderUI extends BasicSliderUI{
 
 		left.x = (int)((rangeSlider.getValue()-rangeSlider.getMinimum())*scale);
 		right.x = (int)((rangeSlider.getRightValue()-rangeSlider.getMinimum())*scale);
-		//left.x =xPositionForValue(rangeSlider.getValue()-1);
-		//right.x = xPositionForValue(rangeSlider.getValue() + rangeSlider.getExtent()-1);
 
 		// middle
 		g2D.setColor(Color.ORANGE);
