@@ -11,20 +11,22 @@ import javax.swing.plaf.basic.BasicSliderUI;
 
 public class RangeSliderUI extends BasicSliderUI{
 
-	private Rectangle gauche, droite;
-	RangeSlider self;
-	enum States {IDLE,CLICK_RIGHT_SIDE,CLICK_LEFT_SIDE,CLICK_MIDDLE,CLICK_RECT_LEFT,CLICK_RECT_RIGHT};
+	private Rectangle left, right;
+	RangeSlider rangeSlider;
+	enum States {IDLE,CLICK_RIGHT_SIDE,CLICK_LEFT_SIDE,CLICK_RECT_LEFT,CLICK_RECT_RIGHT};
 	States state;
 
-
-	private int oldValue = 0;
 	
-	public RangeSliderUI(RangeSlider o) {
-		super(o);
-		this.self = o;
+	/* the constructor 
+	 * we just initialize every variable*/
+	
+	public RangeSliderUI(RangeSlider rangeSlider) {
+		super(rangeSlider);
+		this.rangeSlider= rangeSlider;
 		state = States.IDLE;
-		gauche = new Rectangle(self.getValue(),0,self.thumbWidth,self.thumbHeight);
-		droite = new Rectangle(self.getUpValue(),0,self.thumbWidth,self.thumbHeight);	
+		float scale = (rangeSlider.getWidth()-rangeSlider.thumbWidth)/(float)(rangeSlider.getMaximum()-rangeSlider.getMinimum()) ;
+		left = new Rectangle((int)(rangeSlider.getValue()*scale),0,rangeSlider.thumbWidth,rangeSlider.thumbHeight);
+		right = new Rectangle((int)(rangeSlider.getRightValue()*scale),0,rangeSlider.thumbWidth,rangeSlider.thumbHeight);	
 	}
 	
 	@Override
@@ -32,102 +34,101 @@ public class RangeSliderUI extends BasicSliderUI{
 		return new RangeSliderEvent();
 	}
 	
-	// To add a thumb
-	@Override
-	public void installUI(JComponent c) {
-		super.installUI(c);
-	}
-
-	// to draw the two thumb
-	@Override
-	public void paint(Graphics g, JComponent c) {
-		TestUI.setvalUI();
-// appel à paintThunb dans le super...
-		super.paint(g, c);
-	}
-
-	@Override
-	public void paintThumb(Graphics g) {
-		Graphics2D g2D = (Graphics2D) g.create();
-
-		gauche.x = self.getValue();
-		droite.x = self.getUpValue();
-
-		// middle
-		g2D.setColor(Color.RED);
-		g2D.fillRect(gauche.x+gauche.width,gauche.height/4,droite.x-gauche.x,gauche.height/2);
-		
-		// left cursor
-		g2D.setColor(Color.LIGHT_GRAY);
-		g2D.fillRect(gauche.x, gauche.y, gauche.width, gauche.height);
-		
-		//right cursor
-		g2D.setColor(Color.LIGHT_GRAY);
-		g2D.fillRect(droite.x,droite.y,droite.width,droite.height);
-
-
-		g2D.dispose();
-	}
-
-
+	/* this class implements all the events with the clics ! */
 	private class RangeSliderEvent extends TrackListener{
 
 		States getPosition(MouseEvent e) {
-			if(droite.contains(e.getPoint())){
+
+			if(right.contains(e.getPoint())){
 				return States.CLICK_RECT_RIGHT;
-			}else if(gauche.contains(e.getPoint())){
+			}else if(left.contains(e.getPoint())){
 				return States.CLICK_RECT_LEFT;
-			}else if(e.getX()<gauche.x){
+			}else if(e.getX()<left.x){
 				return States.CLICK_LEFT_SIDE;
-			}else if(e.getX()>droite.x){
+			}else if(e.getX()>right.x){
 				return States.CLICK_RIGHT_SIDE;
 			}else{
-				return States.CLICK_MIDDLE;
+				/*if we clic on the middle. nothing happens */
+				return States.IDLE;
+			}
+		}
+
+	
+		@Override
+		public void mousePressed(MouseEvent e) {
+			state = getPosition(e);
+			float scale = (rangeSlider.getWidth()-rangeSlider.thumbWidth)/(float)(rangeSlider.getMaximum()-rangeSlider.getMinimum()) ;
+
+			switch(state){
+			case CLICK_LEFT_SIDE:
+				rangeSlider.setSliderLeft((int)(e.getX()/scale)+rangeSlider.getMinimum());
+				break;
+			case CLICK_RIGHT_SIDE:
+				rangeSlider.setSliderRight((int)(e.getX()/scale)+rangeSlider.getMinimum());
+				break;
+			default:
+				break;
+			}
+		}
+		
+		@Override
+		public void mouseDragged(MouseEvent e) {
+			float scale = (rangeSlider.getWidth()-rangeSlider.thumbWidth)/(float)(rangeSlider.getMaximum()-rangeSlider.getMinimum()) ;
+			switch(state) {
+			case CLICK_RECT_LEFT:
+				rangeSlider.setSliderLeft((int)(e.getX()/scale)+rangeSlider.getMinimum());
+				break;
+			case CLICK_RECT_RIGHT:
+				rangeSlider.setSliderRight((int)(e.getX()/scale)+rangeSlider.getMinimum());
+				break;
+			default:
+				break;
 			}
 		}
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
+			/*we come back to first state */
 			state = States.IDLE;
 		}
 
-		@Override
-		public void mousePressed(MouseEvent e) {
-			state = getPosition(e);
-			switch(state){
-			case CLICK_LEFT_SIDE:
-				self.setSliderGauche(e.getX());
-				break;
-			case CLICK_RIGHT_SIDE:
-				self.setSliderDroite(e.getX());
-				break;
-			case CLICK_MIDDLE :
-				oldValue = e.getX();
-				break;
-			default:
-				break;
-			}
-		}
-
-		@Override
-		public void mouseDragged(MouseEvent e) {
-			switch(state) {
-			case CLICK_MIDDLE:
-				int newValue = e.getX();
-				int offset = newValue - oldValue;
-				self.moveRange(offset);
-				oldValue = newValue;
-				break;
-			case CLICK_RECT_LEFT:
-				self.setSliderGauche(e.getX());
-				break;
-			case CLICK_RECT_RIGHT:
-				self.setSliderDroite(e.getX());
-				break;
-			default:
-				break;
-			}
-		}
-
 	}
+	
+	// To add a thumb
+	@Override
+	public void installUI(JComponent component) {
+		super.installUI(component);
+	}
+
+	// to draw the two thumbs
+	@Override
+	public void paint(Graphics g, JComponent c) {
+		super.paint(g, c);
+	}
+
+	@Override
+	public void paintThumb(Graphics g) {
+		float scale = (rangeSlider.getWidth()-rangeSlider.thumbWidth)/(float)(rangeSlider.getMaximum()-rangeSlider.getMinimum()) ;
+		Graphics2D g2D = (Graphics2D) g.create();
+
+		left.x = (int)((rangeSlider.getValue()-rangeSlider.getMinimum())*scale);
+		right.x = (int)((rangeSlider.getRightValue()-rangeSlider.getMinimum())*scale);
+		//left.x =xPositionForValue(rangeSlider.getValue()-1);
+		//right.x = xPositionForValue(rangeSlider.getValue() + rangeSlider.getExtent()-1);
+
+		// middle
+		g2D.setColor(Color.ORANGE);
+		g2D.fillRect(left.x+left.width,left.height/4,right.x-left.x,left.height/2);
+		//left cursor
+		g2D.setColor(Color.blue);
+		g2D.fillRect(left.x, left.y, left.width, left.height);
+		//right cursor
+		g2D.setColor(Color.red);
+		g2D.fillRect(right.x,right.y,right.width,right.height);
+		
+		g2D.dispose();
+	}
+
+
+	
 }
